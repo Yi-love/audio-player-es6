@@ -1,0 +1,36 @@
+{
+  "name": "player",
+  "version": "1.0.0",
+  "description": "music player demo",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "babel-node server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "audio"
+  ],
+  "author": "Yi-love",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.13.2",
+    "babel-loader": "^6.2.5",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.13.2",
+    "babel-preset-es2015-loose": "^7.0.0",
+    "webpack": "^1.13.2"
+  },
+  "dependencies": {
+    "koa": "^1.2.1",
+    "koa-bodyparser": "^2.2.0",
+    "koa-convert": "^1.2.0",
+    "koa-logger": "^1.3.0",
+    "koa-router": "^5.4.0",
+    "koa-static": "^2.0.0",
+    "babel-cli": "^6.9.0",
+    "babel-polyfill": "^6.9.1",
+    "babel-preset-es2015-node5": "^1.2.0",
+    "co-views": "^2.1.0",
+    "ejs": "^2.5.1"
+  }
+}
