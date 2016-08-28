@@ -22,6 +22,7 @@ const P_EMPTY_FUNC = (state , player)=>{ return player }
  *
  * audioList         播放列表
  * audioCurrentIndex 当前播放第几首
+ * lastPlayIndex     上一首id
  * audioCurrent      播放Audio
  * state             播放状态
  * playDir           播放方向
@@ -146,7 +147,7 @@ export default class Player{
     }
     setAudioCurrentIndex(n){
         this.lastPlayIndex = this.audioCurrentIndex
-        if ( n === void 0 ) this
+        if ( n === void 0 ) return this
         if ( this.audioList.length && this.audioCurrentIndex+n >= this.audioList.length ){
             this.audioCurrentIndex = this.audioList.length-1
             return this
