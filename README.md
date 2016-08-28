@@ -20,7 +20,7 @@ music player
 			console.log(state)
 		},
 		abort: function(state , player){
-			console.log(state , player.audioCurrentIndex , player.audioList[player.audioCurrentIndex])
+			console.log(state , player.lastPlayIndex , player.audioList[player.lastPlayIndex])
 		}
 	}).play();
 ```

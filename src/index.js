@@ -48,7 +48,7 @@ const P_EMPTY_FUNC = (state , player)=>{ return player }
                 console.log('playing...' , player.audioCurrentIndex , player.audioList[player.audioCurrentIndex])
             },
             end:function(state , player ){
-                console.log('end...' , player.audioCurrentIndex , player.audioList[player.audioCurrentIndex])
+                console.log('end...' , player.lastPlayIndex , player.audioList[player.lastPlayIndex])
             }
         }).play();
  */
@@ -58,7 +58,8 @@ export default class Player{
         if ( play === void 0 ) play = {}
         if ( ({}).toString(play) !== '[object Object]' ) throw new Error('Player need {}')
         this.audioList         = []
-        this.audioCurrentIndex = 0
+        this.lastPlayIndex     = this.audioCurrentIndex 
+                               = play.audioCurrentIndex ? play.audioCurrentIndex-1 : 0
         this.audioCurrent      = new Audio()
         this.state             = P_PADDING
         this.playDir           = P_DIR
@@ -73,7 +74,7 @@ export default class Player{
                                     play: P_EMPTY_FUNC , playing: P_EMPTY_FUNC  , end: P_EMPTY_FUNC }
 
         this.src(play.audioList).setAbortTime(play.abortTime).setAuto(play.auto).setMode(play.mode)
-            .setAudioCurrentIndex(play.audioCurrentIndex ? play.audioCurrentIndex-1 : 0).setVolume(play.volume).setCallBack(play.callback).addEvent()
+            .setVolume(play.volume).setCallBack(play.callback).addEvent()
     }
     src(source){
         if ( !source ) return this
@@ -93,7 +94,7 @@ export default class Player{
             n <= this.audioList.length || n > 0 ) {
             return this.jump(n - this.audioCurrentIndex-1)
         }
-        return !this.audioCurrent.currentSrc ? this.loading() : this.audioPlay()
+        return !this.audioCurrent.currentSrc ? this.loading() : this.setAudioCurrentIndex().audioPlay()
     }
     next(){
         return this.reDir().jump(this.mode === P_MODE_SINGLE ? 1 : this.getStep())
@@ -144,6 +145,7 @@ export default class Player{
         return this.reVolume()
     }
     setAudioCurrentIndex(n){
+        this.lastPlayIndex = this.audioCurrentIndex
         if ( n === void 0 ) this
         if ( this.audioList.length && this.audioCurrentIndex+n >= this.audioList.length ){
             this.audioCurrentIndex = this.audioList.length-1
@@ -247,7 +249,7 @@ export default class Player{
             },
             ended:(e)=>{ 
                 this.reState(P_ENDED).runCallBack('end')
-                return this.auto ? this.jump(this.getStep()) : this
+                return this.auto ? this.jump(this.getStep()) : this.setAudioCurrentIndex()
             }
         }
         for ( let eventName in this.eventHandler ){
