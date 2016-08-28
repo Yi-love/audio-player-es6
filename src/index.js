@@ -1,20 +1,19 @@
-const P_PADDING      = 0
-const P_LOAD_START   = 1
-const P_LOADING      = 2
-const P_PLAY         = 3
-const P_LOADING_DATA = 4
-const P_PLAYING      = 5
-const P_ERROR        = 6
-const P_PAUSE        = 7
-const P_ENDED        = 8 
-const P_ABORT        = 9
+const P_PADDING      = 'P_PADDING'
+const P_LOAD_START   = 'P_LOAD_START'
+const P_LOADING      = 'P_LOADING'
+const P_PLAY         = 'P_PLAY'
+const P_PLAYING      = 'P_PLAYING'
+const P_ERROR        = 'P_ERROR'
+const P_PAUSE        = 'P_PAUSE'
+const P_ENDED        = 'P_ENDED'
+const P_ABORT        = 'P_ABORT'
 
 const P_DIR          = 1
 
-const P_MODE_SINGLE      = 1
-const P_MODE_ORDER       = 2
-const P_MODE_CIRCULATION = 3
-const P_MODE_RANDOM      = 4
+const P_MODE_SINGLE      = 'P_MODE_SINGLE'
+const P_MODE_ORDER       = 'P_MODE_ORDER'
+const P_MODE_CIRCULATION = 'P_MODE_CIRCULATION'
+const P_MODE_RANDOM      = 'P_MODE_RANDOM'
 
 const P_EMPTY_FUNC = (state , player)=>{ return player }
 
@@ -34,6 +33,24 @@ const P_EMPTY_FUNC = (state , player)=>{ return player }
  * eventHandler      事件句柄
  * mode              播放模式
  * callback          歌曲各个阶段的回调函数对象
+ *
+ *
+ * eg :
+ *   var audio = new Player();
+        audio.src(['/music/1.mp3','/music/2.mp3','/music/5.mp3','/music/4.mp3'])
+        .src('hjk.mpg').src('/music/3.mp3').src('/music/4.mp3')
+        .setCallBack({
+            loading: function(state , player){
+                console.log('loading...' , state);
+                document.getElementById('current').innerHTML = player.audioList[player.audioCurrentIndex]
+            },
+            playing:function(state , player){
+                console.log('playing...' , player.audioCurrentIndex , player.audioList[player.audioCurrentIndex])
+            },
+            end:function(state , player ){
+                console.log('end...' , player.audioCurrentIndex , player.audioList[player.audioCurrentIndex])
+            }
+        }).play();
  */
 export default class Player{
     constructor(play){
@@ -52,8 +69,8 @@ export default class Player{
         this.auto              = true
         this.eventHandler      = {}
         this.mode              = P_MODE_ORDER
-        this.callback          = {error: P_EMPTY_FUNC , emptied : P_EMPTY_FUNC , loadstart:P_EMPTY_FUNC , loading : P_EMPTY_FUNC , 
-                                    play: P_EMPTY_FUNC , playing: P_EMPTY_FUNC  , end : P_EMPTY_FUNC }
+        this.callback          = {error: P_EMPTY_FUNC , abort: P_EMPTY_FUNC , loadstart:P_EMPTY_FUNC , loading: P_EMPTY_FUNC , 
+                                    play: P_EMPTY_FUNC , playing: P_EMPTY_FUNC  , end: P_EMPTY_FUNC }
 
         this.src(play.audioList).setAbortTime(play.abortTime).setAuto(play.auto).setMode(play.mode)
             .setAudioCurrentIndex(play.audioCurrentIndex ? play.audioCurrentIndex-1 : 0).setVolume(play.volume).setCallBack(play.callback).addEvent()
@@ -79,19 +96,23 @@ export default class Player{
         return !this.audioCurrent.currentSrc ? this.loading() : this.audioPlay()
     }
     next(){
-        return this.reDir().jump(this.getStep())
+        return this.reDir().jump(this.mode === P_MODE_SINGLE ? 1 : this.getStep())
     }
     pre(){
-        return this.reDir(-1).jump(this.getStep())
+        return this.reDir(-1).jump(this.mode === P_MODE_SINGLE ? -1 : this.getStep())
     }
     jump(n){
-        if ( n === void 0 || n === 0 ) n = 1
+        if ( n === void 0 ) n = this.getStep()
         if ( typeof n !== 'number' || this.audioCurrentIndex+n >= this.audioList.length || this.audioCurrentIndex+n < 0) 
             return this.reAbort().reDir().reState()
         return this.pause().reAbort().setAudioCurrentIndex(n).loading()
     }
     setMode(mode){
-        this.mode = [P_MODE_SINGLE , P_MODE_ORDER , P_MODE_CIRCULATION , P_MODE_RANDOM].includes(mode) ? mode : this.mode
+        let modes = [P_MODE_SINGLE , P_MODE_ORDER , P_MODE_CIRCULATION , P_MODE_RANDOM]
+        if ( typeof mode === 'string' && modes.includes(mode) )
+            this.mode =  mode
+        if ( typeof mode === 'number' && modes[mode] ) 
+            this.mode = modes[mode]
         return this
     }
     setAuto(auto){
@@ -181,6 +202,11 @@ export default class Player{
         if ( this.audioList.length && this.audioCurrentIndex < this.audioList.length && this.audioCurrentIndex >= 0 ) { // loading
             this.reAbort().reState(P_PADDING)
             this.audioCurrent.src = this.audioList[this.audioCurrentIndex]
+            this.abortHandler = setTimeout(()=>{
+                let event = document.createEvent('Events')
+                event.initEvent('emptied' , false , true)
+                this.pause().audioCurrent.dispatchEvent(event)
+            } , this.abortTime)
             return this.auto ? this.audioPlay() : this
         }
         return this.reState()
@@ -202,39 +228,31 @@ export default class Player{
         this.eventHandler = {
             error:(e)=>{
                 this.reAbort().reState(P_ERROR).setErrorAudio().runCallBack('error')
-                return this.auto ? this.jump(this.getStep()) : this
+                return this.auto ? this.jump(this.mode === P_MODE_SINGLE ? (this.playDir === P_DIR ? 1 : -1) : this.getStep()) : this
             },
             loadstart:(e)=>{
-                return this.reAbort().reState(P_LOAD_START).runCallBack('loadstart')
+                return this.reState(P_LOAD_START).runCallBack('loadstart')
             },
             loadedmetadata:(e)=>{
                 return this.reAbort().reState(P_LOADING).filerErrorAudio().runCallBack('loading').reDir()
             },
             emptied:(e)=>{
-                return this.reAbort().reState(P_ABORT).runCallBack('emptied')
-            },
-            progress:(e)=>{
-                return this.reAbort().reState(P_LOADING_DATA).runCallBack('progress')
+                return this.reState(P_ABORT).runCallBack('abort')
             },
             canplay:(e)=>{
-               return this.reAbort().reState(P_PLAY).runCallBack('play')
+               return this.reState(P_PLAY).runCallBack('play')
             },
             playing:(e)=>{
-                return this.reAbort().reState(P_PLAYING).runCallBack('playing')
+                return this.reState(P_PLAYING).runCallBack('playing')
             },
             ended:(e)=>{ 
-                this.reAbort().reState(P_ENDED).runCallBack('end').reState()
+                this.reState(P_ENDED).runCallBack('end')
                 return this.auto ? this.jump(this.getStep()) : this
             }
         }
         for ( let eventName in this.eventHandler ){
             this.audioCurrent.addEventListener(eventName , this.eventHandler[eventName] , false)
         }
-        this.abortHandler = setTimeout(()=>{
-            let event = document.createEvent('Events')
-            event.initEvent('emptied' , false , true)
-            this.audioCurrent.dispatchEvent(event)
-        } , this.abortTime)
         return this
     }
     filerErrorAudio(){
