@@ -202,8 +202,8 @@ export default class Player{
         return this
     }
     loading(){
-        if ( this.audioList.length && this.audioCurrentIndex < this.audioList.length && this.audioCurrentIndex >= 0 ) { // loading
-            this.reAbort().reState(P_PADDING)
+        this.reAbort().reState()
+        if ( this.audioList.length && this.audioCurrentIndex < this.audioList.length && this.audioCurrentIndex >= 0 ) { // loading    
             this.audioCurrent.src = this.audioList[this.audioCurrentIndex]
             this.abortHandler = setTimeout(()=>{
                 let event = document.createEvent('Events')
@@ -212,7 +212,7 @@ export default class Player{
             } , this.abortTime)
             return this.auto ? this.audioPlay() : this
         }
-        return this.reState()
+        return this
     }
     reState(state){
         this.state = state ? state : P_PADDING
