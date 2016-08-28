@@ -202,8 +202,8 @@ export default class Player{
         return this
     }
     loading(){
-        this.reAbort().reState()
         if ( this.audioList.length && this.audioCurrentIndex < this.audioList.length && this.audioCurrentIndex >= 0 ) { // loading    
+            this.reAbort().reState()
             this.audioCurrent.src = this.audioList[this.audioCurrentIndex]
             this.abortHandler = setTimeout(()=>{
                 let event = document.createEvent('Events')
