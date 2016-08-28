@@ -95,7 +95,7 @@ export default class Player{
             n <= this.audioList.length || n > 0 ) {
             return this.jump(n - this.audioCurrentIndex-1)
         }
-        return !this.audioCurrent.currentSrc ? this.loading() : this.setAudioCurrentIndex().audioPlay()
+        return !this.audioCurrent.currentSrc ? this.setAudioCurrentIndex().loading() : this.audioPlay()
     }
     next(){
         return this.reDir().jump(this.mode === P_MODE_SINGLE ? 1 : this.getStep())
