@@ -164,7 +164,7 @@ export default class Player{
         return this
     }
     getErrorAudio(source){
-        if ( source && typeof source === ' string' && this.errorArray.includes(source) ) 
+        if ( source && typeof source === 'string' && this.errorArray.includes(source) ) 
             return true
         if ( source && typeof source === 'number' && source < this.audioList.length && source >= 0 && this.errorArray.includes(this.audioList[source]) ) 
             return true
