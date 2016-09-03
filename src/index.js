@@ -237,7 +237,7 @@ export default class Player{
                 return this.reState(P_LOAD_START).runCallBack('loadstart')
             },
             loadedmetadata:(e)=>{
-                return this.reAbort().reState(P_LOADING).filerErrorAudio().runCallBack('loading').reDir()
+                return this.reAbort().reState(P_LOADING).filterErrorAudio().runCallBack('loading').reDir()
             },
             emptied:(e)=>{
                 return this.reState(P_ABORT).runCallBack('abort')
@@ -258,7 +258,7 @@ export default class Player{
         }
         return this
     }
-    filerErrorAudio(){
+    filterErrorAudio(){
         if ( !this.audioCurrent.src ) return this
         let audioCurrentSrc = this.audioCurrent.src
         this.errorArray = this.errorArray.filter((currentSrc)=>{
