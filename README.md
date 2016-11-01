@@ -145,7 +145,5 @@ demo: https://github.com/Yi-love/audio-player-es6-demo
 cmd
 
 ```
- npm start
- //and
  webpack
 ```
