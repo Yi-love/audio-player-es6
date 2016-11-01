@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 	entry:{
 		index:'./src/index.js'
@@ -16,7 +18,7 @@ module.exports = {
 	},
 	output:{
 		filename:'[name].js',
-		path:'dist/script/',
+		path:'./',
 		library:'Player',
 		libraryTarget:'umd'
 	}

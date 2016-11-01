@@ -1,11 +1,37 @@
 # player
-music player
+html5 audio player
+
+# logs
+
+```
+  v1.0.2  Tue Nov 01 2016 10:50:17 GMT+0800 (中国标准时间)  npm publish
+```
+
+# exports
 
 ```js
+  if(typeof exports === 'object' && typeof module === 'object')
+    module.exports = factory();
+  else if(typeof define === 'function' && define.amd)
+    define([], factory);
+  else if(typeof exports === 'object')
+    exports["Player"] = factory();
+  else
+    root["Player"] = factory();
+```
+
+# import
+
+```js
+   import Player from 'audio-player-es6';
+   //or
+   let Player = require('audio-player-es6');
+   //or
    let player = new Player({})
 ```
 
 #parameters
+
 ```txt
    audioList         播放列表         
    audioCurrentIndex 当前播放第几首
@@ -91,6 +117,8 @@ music player
 ```
 # usage
 
+demo: https://github.com/Yi-love/audio-player-es6-demo
+
 ```js
 	var audio = new Player();
 	audio.src(['/music/1.mp3','/music/2.mp3','/music/5.mp3','/music/4.mp3'])
@@ -110,4 +138,14 @@ music player
 			console.log(state , player.lastPlayIndex , player.audioList[player.lastPlayIndex])
 		}
 	}).play();
+```
+
+# test
+
+cmd
+
+```
+ npm start
+ //and
+ webpack
 ```
