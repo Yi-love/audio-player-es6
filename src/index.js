@@ -19,6 +19,16 @@ const P_MODE_RANDOM      = 'P_MODE_RANDOM';
 
 const P_EMPTY_FUNC = (state , player)=>{ return player; };
 
+//includes
+if ( !Array.prototype.includes ) {
+    Array.prototype.includes = function(source){
+        for (var i = 0; i < this.length; i++) {
+            if ( this[i] === source ) return true;
+        }
+        return false;
+    };
+}
+
 /**
  * Jin  Music Player
  *

@@ -81,6 +81,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return player;
 	};
 
+	//includes
+	if (!Array.prototype.includes) {
+	    Array.prototype.includes = function (source) {
+	        for (var i = 0; i < this.length; i++) {
+	            if (this[i] === source) return true;
+	        }
+	        return false;
+	    };
+	}
+
 	/**
 	 * Jin  Music Player
 	 *
@@ -99,30 +109,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * mode              播放模式
 	 * callback          歌曲各个阶段的回调函数对象
 	 *
-	 *
-	 * eg :
-	 *   var audio = new Player();
-	        audio.src(['/music/1.mp3','/music/2.mp3','/music/5.mp3','/music/4.mp3'])
-	        .src('hjk.mpg').src('/music/3.mp3').src('/music/4.mp3')
-	        .setCallBack({
-	            loading: function(state , player){
-	                console.log('loading...' , state);
-	                document.getElementById('current').innerHTML = player.audioList[player.audioCurrentIndex]
-	            },
-	            playing:function(state , player){
-	                console.log('playing...' , player.audioCurrentIndex , player.audioList[player.audioCurrentIndex])
-	            },
-	            end:function(state , player ){
-	                console.log('end...' , player.lastPlayIndex , player.audioList[player.lastPlayIndex])
-	            }
-	        }).play();
 	 */
 
 	var Player = function () {
 	    function Player(play) {
 	        _classCallCheck(this, Player);
 
-	        if (!window['Audio']) return 'Your browser does not support [window.Audio]';
+	        if (!window.Audio) return 'Your browser does not support [window.Audio]';
 	        if (play === void 0) play = {};
 	        if ({}.toString(play) !== '[object Object]') throw new Error('Player need {}');
 	        this.audioList = [];
@@ -148,7 +141,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (!source) return this;
 	        if (typeof source === 'string') {
-	            !this.audioList.includes(source) && this.audioList.push(source);
+	            if (!this.audioList.includes(source)) this.audioList.push(source);
 	        } else if (Array.isArray(source)) {
 	            (function () {
 	                var _this = _this2;
@@ -238,7 +231,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    Player.prototype.setErrorAudio = function setErrorAudio() {
-	        !this.errorArray.includes(this.audioList[this.audioCurrentIndex]) && this.errorArray.push(this.audioList[this.audioCurrentIndex]);
+	        if (!this.errorArray.includes(this.audioList[this.audioCurrentIndex])) this.errorArray.push(this.audioList[this.audioCurrentIndex]);
 	        return this;
 	    };
 
@@ -260,7 +253,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    Player.prototype.pause = function pause() {
-	        this.audioCurrent && this.audioCurrent.pause();
+	        if (this.audioCurrent) this.audioCurrent.pause();
 	        return this.reState(P_PAUSE);
 	    };
 
@@ -320,26 +313,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this4 = this;
 
 	        this.eventHandler = {
-	            error: function error(e) {
+	            error: function error() {
 	                _this4.reAbort().reState(P_ERROR).setErrorAudio().runCallBack('error');
 	                return _this4.auto ? _this4.jump(_this4.mode === P_MODE_SINGLE ? _this4.playDir === P_DIR ? 1 : -1 : _this4.getStep()) : _this4;
 	            },
-	            loadstart: function loadstart(e) {
+	            loadstart: function loadstart() {
 	                return _this4.reState(P_LOAD_START).runCallBack('loadstart');
 	            },
-	            loadedmetadata: function loadedmetadata(e) {
+	            loadedmetadata: function loadedmetadata() {
 	                return _this4.reAbort().reState(P_LOADING).filterErrorAudio().runCallBack('loading').reDir();
 	            },
-	            emptied: function emptied(e) {
+	            emptied: function emptied() {
 	                return _this4.reState(P_ABORT).runCallBack('abort');
 	            },
-	            canplay: function canplay(e) {
+	            canplay: function canplay() {
 	                return _this4.reState(P_PLAY).runCallBack('play');
 	            },
-	            playing: function playing(e) {
+	            playing: function playing() {
 	                return _this4.reState(P_PLAYING).runCallBack('playing');
 	            },
-	            ended: function ended(e) {
+	            ended: function ended() {
 	                _this4.reState(P_ENDED).runCallBack('end');
 	                return _this4.auto ? _this4.jump(_this4.getStep()) : _this4.setAudioCurrentIndex();
 	            }

@@ -4,6 +4,7 @@ html5 audio player
 # logs
 
 ```
+  v1.0.4  Fri Nov 04 2016 12:38:34 GMT+0800 (中国标准时间)  add array.includes method
   v1.0.2  Tue Nov 01 2016 10:50:17 GMT+0800 (中国标准时间)  npm publish
 ```
 
