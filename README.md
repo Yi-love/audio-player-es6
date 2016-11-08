@@ -1,5 +1,9 @@
-# player
+# Audio player
 html5 audio player
+
+```
+  npm install audio-player-es6
+```
 
 # logs
 
