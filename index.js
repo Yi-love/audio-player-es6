@@ -83,9 +83,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	//includes
 	if (!Array.prototype.includes) {
-	    Array.prototype.includes = function (source) {
-	        for (var i = 0; i < this.length; i++) {
-	            if (this[i] === source) return true;
+	    Array.prototype.includes = function (searchE, fromIndex) {
+	        if (this === null) {
+	            throw new TypeError('Array.prototype.includes called on null or undefined');
+	        }
+
+	        var O = Object(this);
+	        var k = void 0,
+	            len = parseInt(O.length, 10) || 0,
+	            n = parseInt(fromIndex ? fromIndex : 0, 10) || 0;
+	        if (len === 0) {
+	            return false;
+	        }
+	        k = n >= 0 ? n : len + n < 0 ? 0 : len + n;
+
+	        var currentE = void 0;
+	        while (k < len) {
+	            currentE = O[k];
+	            if (searchE === currentE || searchE !== searchE && currentE !== currentE) {
+	                return true;
+	            }
+	            k++;
 	        }
 	        return false;
 	    };
