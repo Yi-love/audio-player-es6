@@ -1,6 +1,6 @@
 {
   "name": "audio-player-es6",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "html5 audio player",
   "main": "index.js",
   "scripts": {

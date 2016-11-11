@@ -84,7 +84,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	//includes
 	if (!Array.prototype.includes) {
 	    Array.prototype.includes = function (searchE, fromIndex) {
-	        if (this === null) {
+	        if (this === null || this === void 0) {
 	            throw new TypeError('Array.prototype.includes called on null or undefined');
 	        }
 

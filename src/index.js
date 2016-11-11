@@ -22,7 +22,7 @@ const P_EMPTY_FUNC = (state , player)=>{ return player; };
 //includes
 if ( !Array.prototype.includes ) {
     Array.prototype.includes = function(searchE , fromIndex) {
-        if ( this === null ) {
+        if ( this === null || this === void 0 ) {
             throw new TypeError('Array.prototype.includes called on null or undefined');
         }
 
@@ -34,7 +34,7 @@ if ( !Array.prototype.includes ) {
             return false;
         }
         k = n >= 0 ? n : ( len+n  < 0 ? 0 : len+n );
-        
+
         let currentE;
         while ( k < len ) {
             currentE = O[k];
