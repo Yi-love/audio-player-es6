@@ -121,7 +121,7 @@ html5 audio player
   reDir(dir)
   reAbort()
   addEvent()
-  filerErrorAudio()
+  filterErrorAudio()
   removeEevent()
 ```
 # usage
